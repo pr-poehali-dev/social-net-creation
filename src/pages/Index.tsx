@@ -5,7 +5,9 @@ import SidebarLeft from "@/components/SidebarLeft";
 import SidebarRight from "@/components/SidebarRight";
 import PostCard from "@/components/PostCard";
 import CreatePostForm from "@/components/CreatePostForm";
+import ContactForm from "@/components/ContactForm";
 import { Toaster } from "@/components/ui/toaster";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Post {
   id: number;
@@ -66,13 +68,23 @@ const Index = () => {
         <SidebarLeft />
         
         <main className="flex-1 py-6 px-4">
-          <CreatePostForm onPostCreated={handlePostCreated} />
-
-          <div>
-            {posts.map(post => (
-              <PostCard key={post.id} {...post} />
-            ))}
-          </div>
+          <Tabs defaultValue="posts" className="mb-6">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="posts">Лента</TabsTrigger>
+              <TabsTrigger value="contact">Оставить заявку</TabsTrigger>
+            </TabsList>
+            <TabsContent value="posts">
+              <CreatePostForm onPostCreated={handlePostCreated} />
+              <div>
+                {posts.map(post => (
+                  <PostCard key={post.id} {...post} />
+                ))}
+              </div>
+            </TabsContent>
+            <TabsContent value="contact">
+              <ContactForm />
+            </TabsContent>
+          </Tabs>
         </main>
 
         <SidebarRight />
