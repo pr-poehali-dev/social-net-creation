@@ -36,6 +36,8 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+const FORM_ENDPOINT = "https://formsubmit.co/jsu314504@gmail.com";
+
 const ContactForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -49,23 +51,47 @@ const ContactForm = () => {
     },
   });
 
-  function onSubmit(values: FormValues) {
+  async function onSubmit(values: FormValues) {
     setIsSubmitting(true);
     
-    // Имитация отправки на сервер
-    setTimeout(() => {
-      console.log("Отправлено на почту jsu314504@gmail.com:", values);
-      
-      // В реальном приложении здесь был бы fetch или axios запрос к API
-      
-      toast({
-        title: "Заявка отправлена",
-        description: "Мы свяжемся с вами в ближайшее время",
+    try {
+      // Используем formsubmit.co для отправки на email
+      const formData = new FormData();
+      Object.entries(values).forEach(([key, value]) => {
+        formData.append(key, value);
       });
       
-      form.reset();
+      // Добавляем скрытые поля для formsubmit
+      formData.append("_subject", `Новая заявка: ${values.subject}`);
+      formData.append("_captcha", "false"); // Отключаем капчу для тестирования
+      
+      const response = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "application/json",
+        },
+      });
+      
+      if (response.ok) {
+        toast({
+          title: "Заявка отправлена",
+          description: "Мы свяжемся с вами в ближайшее время",
+        });
+        form.reset();
+      } else {
+        throw new Error("Ошибка при отправке формы");
+      }
+    } catch (error) {
+      console.error("Ошибка отправки:", error);
+      toast({
+        title: "Ошибка",
+        description: "Произошла ошибка при отправке заявки. Пожалуйста, попробуйте позже.",
+        variant: "destructive",
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   }
 
   return (
