@@ -1,16 +1,26 @@
 
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import SidebarLeft from "@/components/SidebarLeft";
 import SidebarRight from "@/components/SidebarRight";
 import PostCard from "@/components/PostCard";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
-import { Image, Smile, MapPin, Video } from "lucide-react";
+import CreatePostForm from "@/components/CreatePostForm";
+import { Toaster } from "@/components/ui/toaster";
+
+interface Post {
+  id: number;
+  username: string;
+  avatar: string;
+  time: string;
+  content: string;
+  image?: string;
+  likes: number;
+  comments: number;
+  shares: number;
+}
 
 const Index = () => {
-  const posts = [
+  const [posts, setPosts] = useState<Post[]>([
     {
       id: 1,
       username: "Анна Петрова",
@@ -43,7 +53,11 @@ const Index = () => {
       comments: 8,
       shares: 3
     }
-  ];
+  ]);
+
+  const handlePostCreated = (newPost: Post) => {
+    setPosts([newPost, ...posts]);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -52,43 +66,7 @@ const Index = () => {
         <SidebarLeft />
         
         <main className="flex-1 py-6 px-4">
-          <Card className="mb-6">
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src="/placeholder.svg" alt="@username" />
-                  <AvatarFallback>ЮП</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <Textarea 
-                    placeholder="Что у вас нового?" 
-                    className="mb-3 resize-none"
-                  />
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="sm">
-                        <Image className="h-4 w-4 mr-1" />
-                        Фото
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Video className="h-4 w-4 mr-1" />
-                        Видео
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Smile className="h-4 w-4 mr-1" />
-                        Эмоции
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        Место
-                      </Button>
-                    </div>
-                    <Button size="sm">Опубликовать</Button>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <CreatePostForm onPostCreated={handlePostCreated} />
 
           <div>
             {posts.map(post => (
@@ -99,6 +77,7 @@ const Index = () => {
 
         <SidebarRight />
       </div>
+      <Toaster />
     </div>
   );
 };

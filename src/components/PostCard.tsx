@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -21,10 +22,22 @@ const PostCard = ({
   time,
   content,
   image,
-  likes,
+  likes: initialLikes,
   comments,
   shares,
 }: PostCardProps) => {
+  const [likes, setLikes] = useState(initialLikes);
+  const [isLiked, setIsLiked] = useState(false);
+
+  const handleLike = () => {
+    if (isLiked) {
+      setLikes(likes - 1);
+    } else {
+      setLikes(likes + 1);
+    }
+    setIsLiked(!isLiked);
+  };
+
   return (
     <Card className="mb-4 overflow-hidden">
       <CardHeader className="p-4 flex flex-row items-start gap-3">
@@ -50,8 +63,13 @@ const PostCard = ({
         )}
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-between">
-        <Button variant="ghost" size="sm" className="flex gap-1 items-center">
-          <Heart className="h-4 w-4" />
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className={`flex gap-1 items-center ${isLiked ? "text-red-500" : ""}`}
+          onClick={handleLike}
+        >
+          <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
           <span>{likes}</span>
         </Button>
         <Button variant="ghost" size="sm" className="flex gap-1 items-center">
